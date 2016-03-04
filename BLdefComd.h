@@ -13,6 +13,7 @@ extern uint8_t BluetoothMessage[10];
 	
 void UART_Init (unsigned int ubrr); // initialize UART
 
+extern uint8_t PWMChanged;
 
 #endif 
 

@@ -7,8 +7,11 @@
 #include "PWM.h"
 
 float ScaleValue;
+float ScaleValueChange;
 int ScaleValueDetect;
-uint8_t *StrScaleValueDetect;
+uint8_t StrScaleValueDetect[5];
+uint8_t StrPWMValue[5];
+uint8_t StrOCR[5];
 uint8_t DebugAskAnswer[16];
 
 
@@ -29,9 +32,11 @@ int main(void)
 
 			SW_GetMessage();
 			ScaleValue = atof(SWscaleValueForBL+1);
+			
 			//OCR2A = ScaleValue;
-			if (ScaleValue > 0)
+			if ((ScaleValue > 0) && !(ScaleValue == ScaleValueChange))
 			{
+				ScaleValueChange = ScaleValue;
 				BL_SendStr (SWscaleValueForBL);
 			}
 			SWmesIsComplete = 0;		
@@ -50,23 +55,27 @@ int main(void)
 		
 		if(DebugAsk)
 			{
+				StrScaleValueDetect[5] = itoa(ScaleValueDetect,StrScaleValueDetect,10);
+				StrPWMValue[5] = itoa(PWMvalue, StrPWMValue, 10);
+				StrOCR[5] = itoa(OCR2A, StrOCR, 10);
 				BL_SendStr(StrScaleValueDetect);
+				BL_SendStr(StrPWMValue);
+				BL_SendStr(StrOCR);
 				DebugAsk = 0;
 			}
 				
-		if (PWMvalue && (ScaleValue > 20))
+		if (PWMvalue && PWMChanged && (ScaleValue > 20))
 				{
 					PWM_PinValue();   // write gotten correction value from smartphone to OCR2A for change OC2A pin PWM
-					//PWMvalue = 0;
 					ScaleValueDetect = ScaleValue; 
-					StrScaleValueDetect = itoa(ScaleValueDetect,StrScaleValueDetect,10);
+					PWMChanged = 0;
 				}	
 				
 		if((ScaleValue < (ScaleValueDetect - 2)) && (ScaleValue > 5))
 		{
 			OCR2A = 0;
+			ScaleValueDetect = 0;
 		}
-			
 	}
 	}
 
