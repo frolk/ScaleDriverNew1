@@ -14,7 +14,8 @@ static volatile uint8_t SWrxCount = 0;// Receive variables
 volatile uint8_t SWrxMessage[18];
 volatile uint8_t SWrxDataPending;
 volatile uint8_t SWmesIsComplete;
- uint8_t SWscaleValueForBL[10];
+char SWscaleValueForBL[10];
+
 //volatile float ScaleValue;
 	
 void SW_FlushRxBuf()
@@ -116,9 +117,9 @@ void SW_RX_Fill_Buffer(void)
 		}
 }
 
-uint8_t SW_GetChar(void)
+char SW_GetChar(void)
 {
-	uint8_t SWsym;
+	char SWsym;
 	if (SWrxCount > 0)
 	{
 		SWsym = SWrxBuf[SWrxBufHead];
@@ -127,6 +128,11 @@ uint8_t SW_GetChar(void)
 		if(SWrxBufHead == SW_SIZE_BUF) SWrxBufHead = 0;
 		return SWsym;
 	}
+	else
+	{
+		return 0;
+	}
+
 }
 
 void SW_GetMessage(void)
@@ -135,7 +141,7 @@ void SW_GetMessage(void)
 	uint8_t i;
 	for (i=0, j=1; i<18; i++)
 	{
-		uint8_t SWvalue = SW_GetChar();
+		char SWvalue = SW_GetChar();
 		SWrxMessage[i] = SWvalue;
 		SWscaleValueForBL[0] = 'v';
 		if ( (i>6) && (i<14) && (!(SWrxMessage[i] == ' ')))

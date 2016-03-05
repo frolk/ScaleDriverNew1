@@ -47,7 +47,7 @@ static volatile uint8_t SWrxBufTail;
 static volatile uint8_t SWrxBufHead;
 static volatile uint8_t SWrxCount;// Receive variables
 extern volatile uint8_t SWmesIsComplete;
-extern uint8_t SWscaleValueForBL[10];
+extern char SWscaleValueForBL[10];
 //extern volatile float ScaleValue;
 
 

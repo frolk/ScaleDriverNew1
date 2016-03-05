@@ -32,9 +32,9 @@ uint8_t BL_GetChar(void); // get one symbol from buffer using rxhead pointer
 
 void BL_FlushTxBuf(void); // flush tx buffer: head, tail, count = 0
 
-void BL_PutChar(uint8_t sym); // put one symbol into buffer using txhead pointer
+void BL_PutChar(char sym); // put one symbol into buffer using txhead pointer
 
-extern void BL_SendStr(uint8_t *data); // send string starting from data address
+extern void BL_SendStr(char *data); // send string starting from data address
 
 #endif
 

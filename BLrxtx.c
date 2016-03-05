@@ -78,7 +78,7 @@ void BL_Init(uint16_t ubrr) // initialize UART
 	sei();
 }
 
-void BL_PutChar(uint8_t sym)// write next symbol into ring buffer
+void BL_PutChar(char sym)// write next symbol into ring buffer
 {
 	if (((UCSR0A & (1<<UDRE0)) != 0) && (txCount == 0)) UDR0 = sym; // if udr is empty and it's first byte from
 																	// ring buffer we write it directly into udr
@@ -97,13 +97,17 @@ void BL_PutChar(uint8_t sym)// write next symbol into ring buffer
 	}
 }
 
-void BL_SendStr(uint8_t *data)// send string start from the first member with address pointed by *data
+void BL_SendStr(char *data)// send string start from the first member with address pointed by *data
 {
-	uint8_t sym;
+	char sym;
 	while(*data) // while data isn't '\0' or while data consist any data
 	{
 		sym = *data++; // write consisting value of data into sym local variable
 		BL_PutChar(sym); // call function of putting every value into the ring buffer 
+	}
+	if (*data == '\0')
+	{
+		BL_PutChar(',');
 	}
 }
 

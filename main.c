@@ -9,10 +9,14 @@
 float ScaleValue;
 float ScaleValueChange;
 int ScaleValueDetect;
-uint8_t StrScaleValueDetect[6];
-uint8_t StrPWMValue[6];
-uint8_t StrOCR[6];
-uint8_t DebugAskAnswer[16];
+char StrScaleValueDetect[6];
+char StrPWMValue[6];
+char StrOCR[6];
+char DebugAskAnswer[16];
+uint8_t PWMChanged;
+char *StrScaleDetectptr;
+char *StrPWMValueptr;
+char *StrOCRptr;
 
 char* shift_and_mul_utoa16(uint16_t n, char *buffer)
 {
@@ -72,7 +76,7 @@ int main(void)
 			if ((ScaleValue > 0) && !(ScaleValue == ScaleValueChange))
 			{
 				ScaleValueChange = ScaleValue;
-				BL_SendStr (SWscaleValueForBL);
+				//BL_SendStr (SWscaleValueForBL);
 			}
 			SWmesIsComplete = 0;		
 			
@@ -90,21 +94,26 @@ int main(void)
 		
 		if(DebugAsk)
 			{
-				shift_and_mul_utoa16(ScaleValueDetect, StrScaleValueDetect);
-				StrPWMValue[5] = itoa (PWMvalue, StrPWMValue, 10);
-				//shift_and_mul_utoa16(StrOCR, OCR2A);
-				BL_SendStr(StrScaleValueDetect);
-				BL_SendStr(StrPWMValue);
-				//BL_SendStr(StrOCR);
+				StrScaleDetectptr = shift_and_mul_utoa16 (ScaleValueDetect, StrScaleValueDetect) - 1;
+				*StrScaleDetectptr = 's';
+				BL_SendStr(StrScaleDetectptr);
+				
+				StrPWMValueptr = shift_and_mul_utoa16 (PWMvalue, StrPWMValue) - 1;
+				*StrPWMValueptr = 'p';
+				BL_SendStr(StrPWMValueptr);
+				
+				StrOCRptr = shift_and_mul_utoa16 (OCR2A, StrOCR) - 1;
+				*StrOCRptr = 'o';
+				BL_SendStr(StrOCRptr);
 
 				DebugAsk = 0;
 			}
 				
-		if (PWMvalue && PWMChanged && (ScaleValue > 20))
+		if (PWMvalue && (ScaleValue > 20))
 				{
 					PWM_PinValue();   // write gotten correction value from smartphone to OCR2A for change OC2A pin PWM
 					ScaleValueDetect = ScaleValue; 
-					PWMChanged = 0;
+					//PWMChanged = 0;
 				}	
 				
 		if((ScaleValue < (ScaleValueDetect - 2)) && (ScaleValue > 5))
@@ -113,5 +122,5 @@ int main(void)
 			ScaleValueDetect = 0;
 		}
 	}
-	}
+}
 
